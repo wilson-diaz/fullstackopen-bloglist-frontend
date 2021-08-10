@@ -3,12 +3,17 @@ import Login from './components/Login'
 import Blog from './components/Blog'
 import loginService from './services/login'
 import blogService from './services/blogs'
+import BlogCreator from './components/BlogCreator'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
   useEffect(() => {
     if (!user) { return  }
@@ -18,7 +23,7 @@ const App = () => {
         .then(blogs => setBlogs(blogs))
         .catch(err => { throw err })
     } catch (ex) {
-      console.log('error getting blogs', ex)
+      console.error('error getting blogs', ex)
     }
   }, [user])
 
@@ -43,7 +48,18 @@ const App = () => {
       setPassword('')
       setUser(retUser)
     } catch (ex) {
-      console.log(ex)
+      console.error('error logging in', ex)
+    }
+  }
+
+  const handleCreate = async (event) => {
+    event.preventDefault()
+
+    try {
+      const response = await blogService.create({ title, author, url })
+      console.log(response.data)
+    } catch (ex) {
+      console.error('error creating blog', ex)
     }
   }
 
@@ -59,7 +75,14 @@ const App = () => {
     return (
        <div>
           <h2>blogs</h2>
-          <p>{user.username} is logged in</p>
+          <p>{user.username} is logged in 
+            <button onClick={() => window.localStorage.removeItem('loggedBlogUser')}>
+              logout
+            </button>
+          </p>
+          <form onSubmit={handleCreate}>
+            <BlogCreator title={title} setTitle={setTitle} author={author} setAuthor={setAuthor} url={url} setUrl={setUrl} />
+          </form>
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
           )}
