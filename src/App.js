@@ -80,6 +80,15 @@ const App = () => {
       setupNotification('blog created successfully', false)
       newBlogFormRef.current.toggleVisibility()
     } catch (ex) {
+      setupNotification(ex.response.data.error, true)
+    }
+  }
+
+  const updateBlog = async (blog) => {
+    try {
+      const response = await blogService.update(blog)
+      setBlogs(blogs.map(b => b.id === response.id ? {...b, likes: response.likes} : b))
+    } catch (ex) {
       console.error(ex)
       setupNotification(ex.response.data.error, true)
     }
@@ -108,7 +117,7 @@ const App = () => {
             <BlogCreator createBlog={createBlog} />
           </Togglable>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
           )}
       </div>
     )
