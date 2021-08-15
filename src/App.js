@@ -23,13 +23,18 @@ const App = () => {
     setMessage(message)
     setTimeout(() => setMessage(null), 5000)
   }
+
+  const sortBlogsByLikes = (blogs) => {
+    // copy first to avoid mutating state directly
+    return [...blogs].sort((x, y) => y.likes - x.likes)
+  }
   
   useEffect(() => {
     if (!user) { return  }
     try {
       blogService
         .getAll()
-        .then(blogs => setBlogs(blogs))
+        .then(blogs => setBlogs(sortBlogsByLikes(blogs)))
         .catch(err => { throw err })
     } catch (ex) {
       setupNotification(ex.response.data.error, true)
@@ -87,7 +92,7 @@ const App = () => {
   const updateBlog = async (blog) => {
     try {
       const response = await blogService.update(blog)
-      setBlogs(blogs.map(b => b.id === response.id ? {...b, likes: response.likes} : b))
+      setBlogs(sortBlogsByLikes(blogs.map(b => b.id === response.id ? {...b, likes: response.likes} : b)))
     } catch (ex) {
       console.error(ex)
       setupNotification(ex.response.data.error, true)
