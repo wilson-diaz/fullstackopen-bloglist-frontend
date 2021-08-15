@@ -1,7 +1,6 @@
-import { visible } from 'ansi-colors'
 import { useState } from 'react'
 
-const Blog = ({blog, updateBlog}) => {
+const Blog = ({blog, updateBlog, username, deleteBlog}) => {
   const [visible, setVisible] = useState(false)
 
   const toggleVisibility = () => {
@@ -25,6 +24,12 @@ const Blog = ({blog, updateBlog}) => {
     })
   }
 
+  const handleDelete = () => {
+    if (window.confirm(`Are you sure you want to delete the blog: "${blog.title}"?`)) {
+      deleteBlog(blog.id)
+    }
+  }
+
   return (
     <div style={blogStyle}>
       <div>
@@ -34,6 +39,7 @@ const Blog = ({blog, updateBlog}) => {
         <p>{blog.url}</p>
         <p>likes {blog.likes} <button onClick={handleLike}>like</button></p>
         <p>{blog.user.username}</p>
+        {username === blog.user.username && <button onClick={handleDelete}>delete</button>}
       </div>
     </div>  
   )
