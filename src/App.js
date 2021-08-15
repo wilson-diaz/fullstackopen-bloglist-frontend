@@ -81,7 +81,10 @@ const App = () => {
   const createBlog = async (newBlog) => {
     try {
       const response = await blogService.create(newBlog)
-      setBlogs(blogs.concat(response))
+      setBlogs(blogs.concat({
+        ...response,
+        user: { username: user.username } // for rendering and allowing deletion
+      }))
       setupNotification('blog created successfully', false)
       newBlogFormRef.current.toggleVisibility()
     } catch (ex) {
@@ -94,7 +97,15 @@ const App = () => {
       const response = await blogService.update(blog)
       setBlogs(sortBlogsByLikes(blogs.map(b => b.id === response.id ? {...b, likes: response.likes} : b)))
     } catch (ex) {
-      console.error(ex)
+      setupNotification(ex.response.data.error, true)
+    }
+  }
+
+  const deleteBlog = async blogId => {
+    try {
+      await blogService.deleteBlog(blogId)
+      setBlogs(blogs.filter(b => b.id !== blogId))
+    } catch (ex) {
       setupNotification(ex.response.data.error, true)
     }
   }
@@ -122,7 +133,7 @@ const App = () => {
             <BlogCreator createBlog={createBlog} />
           </Togglable>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} username={user.username} deleteBlog={deleteBlog} />
           )}
       </div>
     )
