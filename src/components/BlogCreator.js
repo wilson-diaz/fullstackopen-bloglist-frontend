@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
-const BlogCreator = ({ createBlog}) => {
+const BlogCreator = ({ createBlog }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -9,7 +9,7 @@ const BlogCreator = ({ createBlog}) => {
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    createBlog({title, author, url})
+    createBlog({ title, author, url })
 
     setTitle('')
     setAuthor('')

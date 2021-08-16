@@ -28,7 +28,7 @@ const App = () => {
     // copy first to avoid mutating state directly
     return [...blogs].sort((x, y) => y.likes - x.likes)
   }
-  
+
   useEffect(() => {
     if (!user) { return  }
     try {
@@ -95,7 +95,7 @@ const App = () => {
   const updateBlog = async (blog) => {
     try {
       const response = await blogService.update(blog)
-      setBlogs(sortBlogsByLikes(blogs.map(b => b.id === response.id ? {...b, likes: response.likes} : b)))
+      setBlogs(sortBlogsByLikes(blogs.map(b => b.id === response.id ? { ...b, likes: response.likes } : b)))
     } catch (ex) {
       setupNotification(ex.response.data.error, true)
     }
@@ -118,23 +118,23 @@ const App = () => {
           <Login username={username} setUsername={setUsername} password={password} setPassword={setPassword} />
         </form>
       </div>
-    ) 
+    )
   } else {
     return (
-       <div>
-          {message && <Notification message={message} isError={isError} />}
-          <h2>blogs</h2>
-          <p>{user.username} is logged in 
-            <button onClick={handleLogout}>
+      <div>
+        {message && <Notification message={message} isError={isError} />}
+        <h2>blogs</h2>
+        <p>{user.username} is logged in
+          <button onClick={handleLogout}>
               logout
-            </button>
-          </p>
-          <Togglable buttonLabel='create new blog' ref={newBlogFormRef}>
-            <BlogCreator createBlog={createBlog} />
-          </Togglable>
-          {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} username={user.username} deleteBlog={deleteBlog} />
-          )}
+          </button>
+        </p>
+        <Togglable buttonLabel='create new blog' ref={newBlogFormRef}>
+          <BlogCreator createBlog={createBlog} />
+        </Togglable>
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} updateBlog={updateBlog} username={user.username} deleteBlog={deleteBlog} />
+        )}
       </div>
     )
   }

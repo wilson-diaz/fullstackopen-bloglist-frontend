@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
-const Blog = ({blog, updateBlog, username, deleteBlog}) => {
+const Blog = ({ blog, updateBlog, username, deleteBlog }) => {
   const [visible, setVisible] = useState(false)
 
   const toggleVisibility = () => {
@@ -49,7 +49,7 @@ const Blog = ({blog, updateBlog, username, deleteBlog}) => {
         <p>{blog.user.username}</p>
         {username === blog.user.username && <button onClick={handleDelete}>delete</button>}
       </div>
-    </div>  
+    </div>
   )
 }
 
