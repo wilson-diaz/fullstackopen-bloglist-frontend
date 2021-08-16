@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const Blog = ({blog, updateBlog, username, deleteBlog}) => {
   const [visible, setVisible] = useState(false)
@@ -28,6 +29,13 @@ const Blog = ({blog, updateBlog, username, deleteBlog}) => {
     if (window.confirm(`Are you sure you want to delete the blog: "${blog.title}"?`)) {
       deleteBlog(blog.id)
     }
+  }
+
+  Blog.propTypes = {
+    blog: PropTypes.object.isRequired,
+    updateBlog: PropTypes.func.isRequired,
+    username: PropTypes.string.isRequired,
+    deleteBlog: PropTypes.func.isRequired
   }
 
   return (
