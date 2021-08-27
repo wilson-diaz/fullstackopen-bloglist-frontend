@@ -38,4 +38,26 @@ describe('Blog app', function() {
         .should('have.css', 'color', 'rgb(255, 0, 0)')
     })
   })
+
+  describe('when logged in', function() {
+    beforeEach(function() {
+      cy.request('POST', 'http://localhost:3003/api/login', {
+        username: 'testuser', password: 'testuser123'
+      }).then(response => {
+        localStorage.setItem('loggedBlogUser', JSON.stringify(response.body))
+        cy.visit('http://localhost:3000')
+      })
+    })
+
+    it('a blog can be created', function() {
+      cy.contains('create new blog').click()
+      cy.get('#txtTitle').type('this is a test blog')
+      cy.get('#txtAuthor').type('test author')
+      cy.get('#txtUrl').type('testurl.test')
+      cy.get('#btnCreate').click()
+
+      cy.contains('blog created successfully')
+      cy.contains('this is a test blog')
+    })
+  })
 })

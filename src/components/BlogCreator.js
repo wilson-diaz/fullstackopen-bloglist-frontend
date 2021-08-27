@@ -30,7 +30,7 @@ const BlogCreator = ({ createBlog }) => {
           onChange={({ target }) => setAuthor(target.value)}/></p>
         <p>url: <input id="txtUrl" type="text" name="URL" value={url}
           onChange={({ target }) => setUrl(target.value)}/></p>
-        <button type="submit">create</button>
+        <button id='btnCreate' type="submit">create</button>
       </form>
     </>
   )
