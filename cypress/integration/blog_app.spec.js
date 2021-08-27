@@ -2,15 +2,7 @@ describe('Blog app', function() {
   // reset database using api
   beforeEach(function() {
     cy.request('POST', 'http://localhost:3003/api/testing/reset')
-
-    const user = {
-      name: 'testuser',
-      username: 'testuser',
-      password: 'testuser123'
-    }
-    cy.request('POST', 'http://localhost:3003/api/users/', user)
-
-    cy.visit('http://localhost:3000')
+    cy.createUser({ name: 'testuser', username: 'testuser', password: 'testuser123' })
   })
 
   it('Login form is shown by default', function() {
@@ -41,12 +33,7 @@ describe('Blog app', function() {
 
   describe('when logged in', function() {
     beforeEach(function() {
-      cy.request('POST', 'http://localhost:3003/api/login', {
-        username: 'testuser', password: 'testuser123'
-      }).then(response => {
-        localStorage.setItem('loggedBlogUser', JSON.stringify(response.body))
-        cy.visit('http://localhost:3000')
-      })
+      cy.login({ username: 'testuser', password: 'testuser123' })
     })
 
     it('a blog can be created', function() {
@@ -73,6 +60,29 @@ describe('Blog app', function() {
 
         cy.get('@divDetails').get('.btnLike').click()
         cy.get('@divDetails').contains('likes 1')
+      })
+
+      it('a blog can be deleted by its creator', function() {
+        cy.contains('testing when blog exists').parent().as('divBlog')
+        cy.get('@divBlog').find('.btnToggler').click()
+        cy.get('@divBlog').find('.blogDetails').as('divDetails')
+
+        cy.on('window:confirm', () => true)
+        cy.get('@divDetails').find('.btnDelete').click()
+        cy.get('html').should('not.contain', 'testing when blog exists')
+      })
+
+      it('users cannot delete each other\'s blogs', function() {
+        cy.createBlog({ title: 'don\'t delete me', author: 'existence tester', url: 'testing.test' })
+        cy.createUser({ name: 'someoneelse', username: 'someoneelse', password: 'else123' })
+        cy.login({ username: 'someoneelse', password: 'else123' })
+
+        cy.contains('don\'t delete me').parent().as('divBlog')
+        cy.get('@divBlog').find('.btnToggler').click()
+        cy.get('@divBlog').find('.blogDetails').as('divDetails')
+
+        cy.on('window:confirm', () => true)
+        cy.get('@divDetails').should('not.contain', '.btnDelete')
       })
     })
   })
