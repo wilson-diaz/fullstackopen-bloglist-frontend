@@ -59,5 +59,21 @@ describe('Blog app', function() {
       cy.contains('blog created successfully')
       cy.contains('this is a test blog')
     })
+
+    describe('and a blog exists', function() {
+      beforeEach(function() {
+        cy.createBlog({ title: 'testing when blog exists', author: 'existence tester', url: 'testing.test' })
+      })
+
+      it('a blog can be liked', function() {
+        cy.contains('testing when blog exists').parent().as('divBlog')
+        cy.get('@divBlog').get('.btnToggler').click()
+        cy.get('@divBlog').get('.blogDetails').as('divDetails')
+        cy.get('@divDetails').contains('likes 0')
+
+        cy.get('@divDetails').get('.btnLike').click()
+        cy.get('@divDetails').contains('likes 1')
+      })
+    })
   })
 })
