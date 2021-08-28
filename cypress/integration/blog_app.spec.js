@@ -85,5 +85,40 @@ describe('Blog app', function() {
         cy.get('@divDetails').should('not.contain', '.btnDelete')
       })
     })
+
+    describe('and many blogs exist', () => {
+      beforeEach(function() {
+        cy.createBlogNoVisit({ title: '1 of many', author: 'many tester', url: 'testing.test.many', likes: 1 })
+        cy.createBlogNoVisit({ title: '2 of many', author: 'many tester', url: 'testing.test.many', likes: 2 })
+        cy.createBlogNoVisit({ title: '3 of many', author: 'many tester', url: 'testing.test.many', likes: 3 })
+        cy.createBlogNoVisit({ title: '4 of many', author: 'many tester', url: 'testing.test.many', likes: 4 })
+        cy.createBlogNoVisit({ title: '5 of many', author: 'many tester', url: 'testing.test.many', likes: 5 })
+        cy.createBlogNoVisit({ title: '6 of many', author: 'many tester', url: 'testing.test.many', likes: 6 })
+        cy.createBlogNoVisit({ title: '7 of many', author: 'many tester', url: 'testing.test.many', likes: 7 })
+        cy.createBlogNoVisit({ title: '8 of many', author: 'many tester', url: 'testing.test.many', likes: 8 })
+        cy.visit('http://localhost:3000')
+      })
+
+      it('blogs are ordered by likes', function() {
+        const likes = []
+        cy.get('.btnToggler').then(buttons => {
+          for (let i = 0; i < buttons.length; i++) {
+            cy.wrap(buttons[i]).as('btnTemp')
+            cy.get('@btnTemp').click()
+            cy.get('@btnTemp').parent().parent().find('.blogDetails').find('.btnLike').parent()
+              .then(p => likes.push(p[0].innerText.split(' ')[1] * 1))
+          }
+        }).then(likes => {
+          let isOrdered = true
+          for (let i = 1; i < likes.length; i++) {
+            if(likes[i] < likes[i-1]) {
+              isOrdered = false
+              break
+            }
+          }
+          expect(isOrdered).to.be.true
+        })
+      })
+    })
   })
 })
