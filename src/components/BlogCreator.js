@@ -1,23 +1,26 @@
 import React, { useState } from 'react'
-import PropTypes from 'prop-types'
+import { useDispatch } from 'react-redux'
 
-const BlogCreator = ({ createBlog }) => {
+import { createBlog } from '../reducers/blogReducer'
+import { setNotification } from '../reducers/notificationReducer'
+
+const BlogCreator = ({ toggleVisibility, username }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
+  const dispatch = useDispatch()
+
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    createBlog({ title, author, url })
+    dispatch(createBlog({ title, author, url }, username))
+    dispatch(setNotification('blog created successfully', false, 10))
+    toggleVisibility()
 
     setTitle('')
     setAuthor('')
     setUrl('')
-  }
-
-  BlogCreator.propTypes = {
-    createBlog: PropTypes.func.isRequired
   }
 
   return (

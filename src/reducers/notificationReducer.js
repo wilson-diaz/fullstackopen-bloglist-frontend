@@ -27,7 +27,7 @@ export const clearNotification = () => {
 
 export const setNotification = (message, isError, seconds) => {
   return async dispatch => {
-    const clearId = setTimeout(() => {
+    const prevId = setTimeout(() => {
       dispatch(clearNotification())
     }, (seconds * 1000))
     dispatch({
@@ -35,7 +35,7 @@ export const setNotification = (message, isError, seconds) => {
       data: {
         message,
         isError,
-        clearId
+        prevId
       }
     })
   }
