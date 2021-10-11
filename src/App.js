@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 
 import Login from './components/Login'
 import Blog from './components/Blog'
@@ -9,20 +10,17 @@ import Togglable from './components/Togglable'
 import loginService from './services/login'
 import blogService from './services/blogs'
 
+import { setNotification } from './reducers/notificationReducer'
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  const [message, setMessage] = useState('')
-  const [isError, setIsError] = useState('')
-
-  const setupNotification = (message, isError) => {
-    setIsError(isError)
-    setMessage(message)
-    setTimeout(() => setMessage(null), 5000)
-  }
+  // eslint-disable-next-line no-unused-vars
+  const dispatch = useDispatch()
+  const state = useSelector(state => state)
 
   const sortBlogsByLikes = (blogs) => {
     // copy first to avoid mutating state directly
@@ -37,7 +35,7 @@ const App = () => {
         .then(blogs => setBlogs(sortBlogsByLikes(blogs)))
         .catch(err => { throw err })
     } catch (ex) {
-      setupNotification(ex.response.data.error, true)
+      dispatch(setNotification(ex.response.data.error, true, 10))
     }
   }, [user])
 
@@ -62,16 +60,16 @@ const App = () => {
       setPassword('')
       setUser(retUser)
 
-      setupNotification('logged in successfully', false)
+      dispatch(setNotification('logged in successfully', false, 10))
     } catch (ex) {
-      setupNotification(ex.response.data.error, true)
+      dispatch(setNotification(ex.response.data.error, true, 10))
     }
   }
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogUser')
     blogService.setToken(null)
-    setupNotification('logged out', false)
+    dispatch(setNotification('logged out', false, 10))
     setUser(null)
   }
 
@@ -85,10 +83,10 @@ const App = () => {
         ...response,
         user: { username: user.username } // for rendering and allowing deletion
       }))
-      setupNotification('blog created successfully', false)
+      dispatch(setNotification('blog created successfully', false, 10))
       newBlogFormRef.current.toggleVisibility()
     } catch (ex) {
-      setupNotification(ex.response.data.error, true)
+      dispatch(setNotification(ex.response.data.error, true, 10))
     }
   }
 
@@ -97,7 +95,7 @@ const App = () => {
       const response = await blogService.update(blog)
       setBlogs(sortBlogsByLikes(blogs.map(b => b.id === response.id ? { ...b, likes: response.likes } : b)))
     } catch (ex) {
-      setupNotification(ex.response.data.error, true)
+      dispatch(setNotification(ex.response.data.error, true, 10))
     }
   }
 
@@ -106,14 +104,14 @@ const App = () => {
       await blogService.deleteBlog(blogId)
       setBlogs(blogs.filter(b => b.id !== blogId))
     } catch (ex) {
-      setupNotification(ex.response.data.error, true)
+      dispatch(setNotification(ex.response.data.error, true, 10))
     }
   }
 
   if (!user) {
     return (
       <div>
-        {message && <Notification message={message} isError={isError} />}
+        {state.message && <Notification />}
         <form onSubmit={handleLogin}>
           <Login username={username} setUsername={setUsername} password={password} setPassword={setPassword} />
         </form>
@@ -122,7 +120,7 @@ const App = () => {
   } else {
     return (
       <div>
-        {message && <Notification message={message} isError={isError} />}
+        {state.message && <Notification />}
         <h2>blogs</h2>
         <p>{user.username} is logged in
           <button onClick={handleLogout}>
