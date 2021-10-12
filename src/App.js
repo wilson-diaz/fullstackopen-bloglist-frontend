@@ -79,25 +79,25 @@ const App = () => {
         </form>
       </div>
     )
-  } else {
-    return (
-      <div>
-        {state.notification.message && <Notification />}
-        <h2>blogs</h2>
-        <p>{user.username} is logged in
-          <button onClick={handleLogout}>
-              logout
-          </button>
-        </p>
-        <Togglable buttonLabel='create new blog' ref={newBlogFormRef}>
-          <BlogCreator username={user.username} toggleVisibility={toggleVisibility} />
-        </Togglable>
-        {state.blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} username={user.username} />
-        )}
-      </div>
-    )
   }
+
+  return (
+    <div>
+      {state.notification.message && <Notification />}
+      <h2>blogs</h2>
+      <p>{user.username} is logged in
+        <button onClick={handleLogout}>
+              logout
+        </button>
+      </p>
+      <Togglable buttonLabel='create new blog' ref={newBlogFormRef}>
+        <BlogCreator username={user.username} toggleVisibility={toggleVisibility} />
+      </Togglable>
+      {state.blogs.map(blog =>
+        <Blog key={blog.id} blog={blog} username={user.username} />
+      )}
+    </div>
+  )
 }
 
 export default App
