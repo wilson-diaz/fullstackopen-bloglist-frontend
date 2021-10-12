@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
 
 import { deleteBlog, updateBlog } from '../reducers/blogReducer'
+import { setNotification } from '../reducers/notificationReducer'
 
 const Blog = ({ blog, username }) => {
   const dispatch = useDispatch()
@@ -29,11 +30,13 @@ const Blog = ({ blog, username }) => {
         likes: blog.likes + 1
       })
     )
+    dispatch(setNotification(`liked blog: "${blog.title}"`, false, 10))
   }
 
   const handleDelete = () => {
     if (window.confirm(`Are you sure you want to delete the blog: "${blog.title}"?`)) {
       dispatch(deleteBlog(blog.id))
+      dispatch(setNotification(`deleted blog: "${blog.title}"`, false, 10))
     }
   }
 
