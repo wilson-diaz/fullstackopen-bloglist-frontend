@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import {
-  BrowserRouter as Router,
-  Switch, Route, Link
+  Switch, Route, Link, useRouteMatch
 } from 'react-router-dom'
 
 import Login from './components/Login'
@@ -11,6 +10,7 @@ import BlogCreator from './components/BlogCreator'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import UserList from './components/UserList'
+import User from './components/User'
 
 import { setNotification } from './reducers/notificationReducer'
 import { initializeBlogs } from './reducers/blogReducer'
@@ -55,12 +55,17 @@ const App = () => {
     )
   }
 
+  const match = useRouteMatch('/users/:id')
+  const userToView = match
+    ? state.users.find(user => user.id === match.params.id)
+    : null
+
   const linkStyle = {
     padding: 5
   }
 
   return (
-    <Router>
+    <>
       {state.notification.message && <Notification />}
       <div>
         <Link style={linkStyle} to='/'>home</Link>
@@ -75,6 +80,9 @@ const App = () => {
       </p>
 
       <Switch>
+        <Route path='/users/:id'>
+          <User user={userToView} />
+        </Route>
         <Route path='/users'>
           <UserList />
         </Route>
@@ -88,7 +96,7 @@ const App = () => {
           )}
         </Route>
       </Switch>
-    </Router>
+    </>
   )
 }
 
