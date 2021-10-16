@@ -77,13 +77,13 @@ const App = () => {
         <Link style={linkStyle} to='/'>home</Link>
         <Link style={linkStyle} to='/blogs'>blogs</Link>
         <Link style={linkStyle} to='/users'>users</Link>
+        <span>
+          {state.user.name} is logged in
+          <button onClick={handleLogout}>
+            logout
+          </button>
+        </span>
       </div>
-
-      <p>{state.user.username} is logged in
-        <button onClick={handleLogout}>
-              logout
-        </button>
-      </p>
 
       <Switch>
         <Route path='/users/:id'>
