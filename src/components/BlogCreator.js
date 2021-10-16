@@ -1,21 +1,22 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { createBlog } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
 import { useField } from '../hooks'
 
-const BlogCreator = ({ toggleVisibility, username }) => {
+const BlogCreator = ({ toggleVisibility }) => {
   const title = useField('text')
   const author = useField('text')
   const url = useField('text')
 
   const dispatch = useDispatch()
+  const currentUser = useSelector(state => state.user.username)
 
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    dispatch(createBlog({ title: title.value, author: author.value, url: url.value }, username))
+    dispatch(createBlog({ title: title.value, author: author.value, url: url.value }, currentUser))
     dispatch(setNotification('blog created successfully', false, 10))
     toggleVisibility();
     [title, author, url].forEach(x => x.resetValue())

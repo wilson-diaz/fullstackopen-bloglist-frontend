@@ -1,27 +1,14 @@
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { deleteBlog, updateBlog } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
 
-const Blog = ({ blog, username }) => {
+const Blog = ({ blog }) => {
+  if (!blog) { return null }
+
   const dispatch = useDispatch()
-
-  const [visible, setVisible] = useState(false)
-  const toggleVisibility = () => {
-    setVisible(!visible)
-  }
-
-  const showWhenVisible = { display: visible ? '' : 'none' }
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
 
   const handleLike = () => {
     dispatch(
@@ -42,19 +29,20 @@ const Blog = ({ blog, username }) => {
 
   Blog.propTypes = {
     blog: PropTypes.object.isRequired,
-    username: PropTypes.string.isRequired,
   }
 
+  const currentUser = useSelector(state => state.user.username)
+
   return (
-    <div style={blogStyle}>
-      <div>
-        {blog.title} {blog.author} <button className='btnToggler' onClick={toggleVisibility}>{visible ? 'hide' : 'view'}</button>
-      </div>
-      <div className='blogDetails' style={showWhenVisible}>
+    <div>
+      <h1>
+        {blog.title} {blog.author}
+      </h1>
+      <div className='blogDetails'>
         <p>{blog.url}</p>
         <p>likes {blog.likes} <button className='btnLike' onClick={handleLike}>like</button></p>
-        <p>{blog.user.username}</p>
-        {username === blog.user.username && <button className='btnDelete' onClick={handleDelete}>delete</button>}
+        <p>added by {blog.user.name}</p>
+        {currentUser === blog.user.username && <button className='btnDelete' onClick={handleDelete}>delete</button>}
       </div>
     </div>
   )
