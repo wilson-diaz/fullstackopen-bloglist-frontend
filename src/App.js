@@ -47,15 +47,6 @@ const App = () => {
     newBlogFormRef.current.toggleVisibility()
   }
 
-  if (!state.user) {
-    return (
-      <div>
-        {state.notification.message && <Notification />}
-        <Login />
-      </div>
-    )
-  }
-
   const userMatch = useRouteMatch('/users/:id')
   const userToView = userMatch
     ? state.users.find(user => user.id === userMatch.params.id)
@@ -65,6 +56,15 @@ const App = () => {
   const blogToView = blogMatch
     ? state.blogs.find(blog => blog.id === blogMatch.params.id)
     : null
+
+  if (!state.user) {
+    return (
+      <div>
+        {state.notification.message && <Notification />}
+        <Login />
+      </div>
+    )
+  }
 
   const linkStyle = {
     padding: 5
