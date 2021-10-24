@@ -2,8 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { deleteBlog, updateBlog } from '../reducers/blogReducer'
+import { deleteBlog, updateBlog, addComment } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
+import { useField } from '../hooks'
 
 const Blog = ({ blog }) => {
   if (!blog) { return null }
@@ -33,6 +34,13 @@ const Blog = ({ blog }) => {
 
   const currentUser = useSelector(state => state.user.username)
 
+  const commentContent = useField('text')
+  const handleSubmitComment = (event) => {
+    event.preventDefault()
+    dispatch(addComment({ content: commentContent.value }, blog.id))
+    commentContent.resetValue()
+  }
+
   return (
     <div>
       <h1>
@@ -46,6 +54,12 @@ const Blog = ({ blog }) => {
       </div>
 
       <h3>comments</h3>
+      <form onSubmit={handleSubmitComment}>
+        <p>
+          <input id="txtCommentContent" {...commentContent.getInputProps()}/>
+          <button id='btnSubmitComment' type="submit">add comment</button>
+        </p>
+      </form>
       { blog.comments.length > 0
         ? <ul>
           {blog.comments.map(com => <li key={com.id}>{com.content}</li>)}
