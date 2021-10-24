@@ -26,6 +26,7 @@ const update = async blog => {
     headers: { Authorization: token }
   }
   blog.user = blog.user.id // replace obj with just id
+  blog.comments = blog.comments.map(c => c.id)
   const response = await axios.put(`${baseUrl}/${blog.id}`, blog, config)
   return response.data
 }
